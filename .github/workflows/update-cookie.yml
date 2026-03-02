@@ -2,8 +2,8 @@ name: Update Cookie Every 3 Hours
 
 on:
   schedule:
-    - cron: '0 */3 * * *'   # Every 3 hours
-  workflow_dispatch:        # Allow manual run
+    - cron: '0 */3 * * *'   # Every 3 hours (UTC)
+  workflow_dispatch:        # Allow manual run from Actions tab
 
 permissions:
   contents: write
@@ -13,20 +13,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Make script executable
         run: chmod +x scripts/update_cookie.sh
 
-      - name: Run script
+      - name: Run cookie update script
         run: ./scripts/update_cookie.sh
 
-      - name: Commit changes
+      - name: Commit changes if cookie updated
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
+
           git add cookie.txt
+
+          # If no changes, stop here (no spam commit)
+          if git diff --cached --quiet; then
+            echo "No changes detected. Skipping commit."
+            exit 0
+          fi
+
           git commit -m "Auto update cookie"
           git push
-        continue-on-error: true
