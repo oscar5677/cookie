@@ -1,8 +1,8 @@
-name: Update Cookie Every 3 Hours
+name: Update Cookie Every Hour
 
 on:
   schedule:
-    - cron: '0 */3 * * *'   # Every 3 hours (UTC)
+    - cron: '0 */1 * * *'   # Every 1 hour (UTC)
   workflow_dispatch:        # Allow manual run from Actions tab
 
 permissions:
