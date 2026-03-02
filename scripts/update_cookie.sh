@@ -11,16 +11,18 @@ COOKIE_LINE=$(echo "$CONTENT" | grep -m 1 '^#EXTHTTP:.*"cookie"')
 # Extract only cookie value
 COOKIE_VALUE=$(echo "$COOKIE_LINE" | sed -E 's/.*"cookie":"([^"]+)".*/\1/')
 
-# Create JSON format
-JSON_OUTPUT=$(cat <<EOF
+# If cookie not found, stop workflow
+if [ -z "$COOKIE_VALUE" ]; then
+  echo "Error: No cookie found!"
+  exit 1
+fi
+
+# Create JSON directly into file
+cat <<EOF > cookie.txt
 {
   "cookieHeader": "$COOKIE_VALUE"
 }
 EOF
-)
-
-# Save to cookie.txt
-echo "$JSON_OUTPUT" > cookie.txt
 
 echo "Updated cookie JSON:"
-echo "$JSON_OUTPUT"
+echo "$COOKIE_VALUE"
