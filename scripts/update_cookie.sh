@@ -1,23 +1,20 @@
 #!/bin/bash
 
-URL="https://raw.githubusercontent.com/alpha4528/m3u/refs/heads/main/jtv.m3u"
+URL="https://pkll.xojiv79335.workers.dev/"
 
-# Download file
 CONTENT=$(curl -s "$URL")
 
-# Extract first EXTHTTP cookie line
-COOKIE_LINE=$(echo "$CONTENT" | grep -m 1 '^#EXTHTTP:.*"cookie"')
+# Extract first channel_url using jq
+CHANNEL_URL=$(echo "$CONTENT" | jq -r '.[0].channel_url')
 
-# Extract only cookie value
-COOKIE_VALUE=$(echo "$COOKIE_LINE" | sed -E 's/.*"cookie":"([^"]+)".*/\1/')
+# Extract __hdnea__
+COOKIE_VALUE=$(echo "$CHANNEL_URL" | grep -o '__hdnea__=.*')
 
-# If cookie not found, stop workflow
 if [ -z "$COOKIE_VALUE" ]; then
-  echo "Error: No cookie found!"
+  echo "Error: No __hdnea__ token found!"
   exit 1
 fi
 
-# Create JSON directly into file
 cat <<EOF > cookie.txt
 {
   "cookieHeader": "$COOKIE_VALUE"
