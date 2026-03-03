@@ -4,17 +4,20 @@ URL="https://pkll.xojiv79335.workers.dev/"
 
 CONTENT=$(curl -s "$URL")
 
-# Extract first channel_url using jq
-CHANNEL_URL=$(echo "$CONTENT" | jq -r '.[0].channel_url')
+# Extract first valid cookie from any channel
+COOKIE_VALUE=$(echo "$CONTENT" | jq -r '
+  .[] 
+  | select(.cookie != null and .cookie != "") 
+  | .cookie
+' | head -n1)
 
-# Extract __hdnea__
-COOKIE_VALUE=$(echo "$CHANNEL_URL" | grep -o '__hdnea__=.*')
-
+# Stop if nothing found
 if [ -z "$COOKIE_VALUE" ]; then
-  echo "Error: No __hdnea__ token found!"
+  echo "Error: No valid cookie found!"
   exit 1
 fi
 
+# Write JSON file
 cat <<EOF > cookie.txt
 {
   "cookieHeader": "$COOKIE_VALUE"
