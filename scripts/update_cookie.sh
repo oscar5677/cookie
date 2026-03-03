@@ -4,10 +4,10 @@ URL="https://pkll.xojiv79335.workers.dev/"
 
 CONTENT=$(curl -s "$URL")
 
-# Extract first valid cookie from any channel
+# Extract first valid cookie
 COOKIE_VALUE=$(echo "$CONTENT" | jq -r '
-  .[] 
-  | select(.cookie != null and .cookie != "") 
+  .[]
+  | select(.cookie != null and .cookie != "")
   | .cookie
 ' | head -n1)
 
@@ -17,7 +17,18 @@ if [ -z "$COOKIE_VALUE" ]; then
   exit 1
 fi
 
-# Write JSON file
+# 🔎 Read old cookie (if file exists)
+OLD_COOKIE=$(jq -r '.cookieHeader' cookie.txt 2>/dev/null)
+
+# 🔄 Compare
+if [ "$OLD_COOKIE" = "$COOKIE_VALUE" ]; then
+  echo "Cookie unchanged. Skipping update."
+  exit 0
+fi
+
+echo "Cookie changed. Updating file..."
+
+# ✍️ Write new cookie
 cat <<EOF > cookie.txt
 {
   "cookieHeader": "$COOKIE_VALUE"
