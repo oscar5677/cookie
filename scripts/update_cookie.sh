@@ -11,16 +11,16 @@ COOKIE_VALUE=$(echo "$CONTENT" | jq -r '
   | .cookie
 ' | head -n1)
 
-# Stop if nothing found
+# If no cookie found → keep old one silently
 if [ -z "$COOKIE_VALUE" ]; then
-  echo "Error: No valid cookie found!"
-  exit 1
+  echo "No valid cookie found. Keeping previous cookie."
+  exit 0
 fi
 
-# 🔎 Read old cookie (if file exists)
+# Read old cookie
 OLD_COOKIE=$(jq -r '.cookieHeader' cookie.txt 2>/dev/null)
 
-# 🔄 Compare
+# If same → skip update
 if [ "$OLD_COOKIE" = "$COOKIE_VALUE" ]; then
   echo "Cookie unchanged. Skipping update."
   exit 0
@@ -28,7 +28,6 @@ fi
 
 echo "Cookie changed. Updating file..."
 
-# ✍️ Write new cookie
 cat <<EOF > cookie.txt
 {
   "cookieHeader": "$COOKIE_VALUE"
