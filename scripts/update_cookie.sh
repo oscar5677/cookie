@@ -4,9 +4,11 @@ URL="https://pkll.xojiv79335.workers.dev/"
 
 CONTENT=$(curl -s "$URL")
 
-# Extract unique cookies
+# Extract unique cookies while preserving original order
 mapfile -t COOKIES < <(echo "$CONTENT" | jq -r '
-  [.[] | select(.cookie != null and .cookie != "") | .cookie] | unique[]
+  [.[] | select(.cookie != null and .cookie != "") | .cookie]
+  | reduce .[] as $c ([]; if index($c) then . else . + [$c] end)
+  | .[]
 ')
 
 if [ ${#COOKIES[@]} -eq 0 ]; then
