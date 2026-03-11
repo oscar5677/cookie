@@ -9,14 +9,13 @@ mapfile -t COOKIES < <(echo "$CONTENT" | jq -r '
   [.[] | select(.cookie != null and .cookie != "") | .cookie] | unique[]
 ')
 
-# If none found
 if [ ${#COOKIES[@]} -eq 0 ]; then
   echo "No valid cookies found."
   exit 0
 fi
 
-# Generate JSON
-echo "{" > cookie.txt
+# Build JSON in memory
+NEW_JSON="{"
 
 for i in "${!COOKIES[@]}"; do
   INDEX=$((i+1))
@@ -30,12 +29,19 @@ for i in "${!COOKIES[@]}"; do
   VALUE="${COOKIES[$i]}"
 
   if [ $INDEX -eq ${#COOKIES[@]} ]; then
-    echo "  \"$KEY\": \"$VALUE\"" >> cookie.txt
+    NEW_JSON="$NEW_JSON\"$KEY\":\"$VALUE\""
   else
-    echo "  \"$KEY\": \"$VALUE\"," >> cookie.txt
+    NEW_JSON="$NEW_JSON\"$KEY\":\"$VALUE\","
   fi
 done
 
-echo "}" >> cookie.txt
+NEW_JSON="$NEW_JSON}"
 
-echo "Updated cookie JSON with ${#COOKIES[@]} unique cookies."
+# Compare with existing file
+if [ -f cookie.txt ] && [ "$(cat cookie.txt)" = "$NEW_JSON" ]; then
+  echo "Cookies unchanged. Skipping update."
+  exit 0
+fi
+
+echo "$NEW_JSON" > cookie.txt
+echo "Cookie file updated."
