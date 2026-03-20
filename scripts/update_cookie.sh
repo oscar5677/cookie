@@ -17,10 +17,10 @@ if [ ${#COOKIES[@]} -eq 0 ]; then
 fi
 # ---- DEFAULT COOKIES (STATIC) ----
 DEFAULT_COOKIES=(
-  "cookieDefault1=YOUR_VALUE_1"
-  "cookieDefault2=YOUR_VALUE_2"
-  "cookieDefault3=YOUR_VALUE_3"
-  "cookieDefault4=YOUR_VALUE_4"
+  "__hdnea__=st=1774003153~exp=1774089553~acl=/*~hmac=70dc37139d185e91fa6b7753aa0a40e814e17cc2235346a6ae078ddb6d000a06"
+  "__hdnea__=st=1774003153~exp=1774089553~acl=/*~hmac=70dc37139d185e91fa6b7753aa0a40e814e17cc2235346a6ae078ddb6d000a06"
+  "__hdnea__=st=1774003153~exp=1774089553~acl=/*~hmac=70dc37139d185e91fa6b7753aa0a40e814e17cc2235346a6ae078ddb6d000a06"
+  "__hdnea__=st=1774003153~exp=1774089553~acl=/*~hmac=70dc37139d185e91fa6b7753aa0a40e814e17cc2235346a6ae078ddb6d000a06"
 )
 
 
