@@ -15,10 +15,31 @@ if [ ${#COOKIES[@]} -eq 0 ]; then
   echo "No valid cookies found."
   exit 0
 fi
+# ---- DEFAULT COOKIES (STATIC) ----
+DEFAULT_COOKIES=(
+  "cookieDefault1=YOUR_VALUE_1"
+  "cookieDefault2=YOUR_VALUE_2"
+  "cookieDefault3=YOUR_VALUE_3"
+  "cookieDefault4=YOUR_VALUE_4"
+)
 
+
+# Build JSON in memory
 # Build JSON in memory
 NEW_JSON="{"
 
+TOTAL_DEFAULTS=${#DEFAULT_COOKIES[@]}
+TOTAL_DYNAMIC=${#COOKIES[@]}
+
+# Add default cookies first
+for i in "${!DEFAULT_COOKIES[@]}"; do
+  KEY="cookieDefault$((i+1))"
+  VALUE="${DEFAULT_COOKIES[$i]}"
+
+  NEW_JSON="$NEW_JSON\"$KEY\":\"$VALUE\","
+done
+
+# Add dynamic cookies
 for i in "${!COOKIES[@]}"; do
   INDEX=$((i+1))
 
@@ -30,7 +51,8 @@ for i in "${!COOKIES[@]}"; do
 
   VALUE="${COOKIES[$i]}"
 
-  if [ $INDEX -eq ${#COOKIES[@]} ]; then
+  # Check if last element overall
+  if [ $i -eq $((TOTAL_DYNAMIC - 1)) ]; then
     NEW_JSON="$NEW_JSON\"$KEY\":\"$VALUE\""
   else
     NEW_JSON="$NEW_JSON\"$KEY\":\"$VALUE\","
@@ -38,6 +60,8 @@ for i in "${!COOKIES[@]}"; do
 done
 
 NEW_JSON="$NEW_JSON}"
+
+
 
 # Compare with existing file
 if [ -f cookie.txt ] && [ "$(cat cookie.txt)" = "$NEW_JSON" ]; then
