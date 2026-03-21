@@ -1,42 +1,69 @@
 #!/bin/bash
 
-# ----------- SOURCE URLS -----------
 URL="https://pkll.xojiv79335.workers.dev/"
 M3U_URL="https://j1.uhd2026.workers.dev/"
+
+# ----------- LOAD EXISTING COOKIES -----------
+OLD_JSON=""
+if [ -f cookie.txt ]; then
+  OLD_JSON=$(cat cookie.txt)
+fi
+
+# Extract old JSON cookies
+mapfile -t OLD_COOKIES < <(echo "$OLD_JSON" | jq -r '
+  to_entries[]
+  | select(.key | startswith("cookieHeader") and (.key | startswith("cookieHeaderjtv") | not))
+  | .value
+' 2>/dev/null)
+
+# Extract old JTV cookies
+mapfile -t OLD_JTV_COOKIES < <(echo "$OLD_JSON" | jq -r '
+  to_entries[]
+  | select(.key | startswith("cookieHeaderjtv"))
+  | .value
+' 2>/dev/null)
 
 # ----------- FETCH JSON API -----------
 CONTENT=$(curl -s --max-time 10 "$URL")
 
-# Validate JSON
-if ! echo "$CONTENT" | jq . >/dev/null 2>&1; then
-  echo "Invalid JSON from API. Skipping..."
-  exit 0
+NEW_JSON_COOKIES=()
+
+if echo "$CONTENT" | jq . >/dev/null 2>&1; then
+  mapfile -t NEW_JSON_COOKIES < <(echo "$CONTENT" | jq -r '
+    [.[] | select(.cookie != null and .cookie != "") | .cookie]
+    | reduce .[] as $c ([]; if index($c) then . else . + [$c] end)
+    | .[]
+  ')
 fi
 
-# Extract unique cookies (preserve order)
-mapfile -t COOKIES < <(echo "$CONTENT" | jq -r '
-  [.[] | select(.cookie != null and .cookie != "") | .cookie]
-  | reduce .[] as $c ([]; if index($c) then . else . + [$c] end)
-  | .[]
-')
-
-if [ ${#COOKIES[@]} -eq 0 ]; then
-  echo "No valid JSON cookies found. Skipping..."
-  exit 0
+# Fallback if failed
+if [ ${#NEW_JSON_COOKIES[@]} -eq 0 ]; then
+  echo "JSON source failed → using old cookies"
+  COOKIES=("${OLD_COOKIES[@]}")
+else
+  COOKIES=("${NEW_JSON_COOKIES[@]}")
 fi
 
-# ----------- FETCH M3U PLAYLIST -----------
+# ----------- FETCH M3U -----------
 M3U_CONTENT=$(curl -s --max-time 10 "$M3U_URL")
 
-# Extract cookies from #EXTHTTP lines
-mapfile -t JTV_COOKIES < <(echo "$M3U_CONTENT" | grep -oP '#EXTHTTP:\{"cookie":"\K[^"]+')
+NEW_JTV_COOKIES=()
+mapfile -t NEW_JTV_COOKIES < <(echo "$M3U_CONTENT" | grep -oP '#EXTHTTP:\{"cookie":"\K[^"]+')
 
-# Remove duplicates (preserve order)
+# Deduplicate
 UNIQUE_JTV=()
-for c in "${JTV_COOKIES[@]}"; do
+for c in "${NEW_JTV_COOKIES[@]}"; do
   [[ " ${UNIQUE_JTV[*]} " =~ " $c " ]] || UNIQUE_JTV+=("$c")
 done
-JTV_COOKIES=("${UNIQUE_JTV[@]}")
+NEW_JTV_COOKIES=("${UNIQUE_JTV[@]}")
+
+# Fallback if failed
+if [ ${#NEW_JTV_COOKIES[@]} -eq 0 ]; then
+  echo "JTV source failed → using old cookies"
+  JTV_COOKIES=("${OLD_JTV_COOKIES[@]}")
+else
+  JTV_COOKIES=("${NEW_JTV_COOKIES[@]}")
+fi
 
 # ----------- DEFAULT COOKIES -----------
 DEFAULT_COOKIES=(
@@ -60,12 +87,12 @@ add_entry() {
   NEW_JSON="$NEW_JSON\"$KEY\":\"$VALUE\""
 }
 
-# Add default cookies
+# Defaults
 for i in "${!DEFAULT_COOKIES[@]}"; do
   add_entry "cookieDefault$((i+1))" "${DEFAULT_COOKIES[$i]}"
 done
 
-# Add JSON API cookies
+# JSON cookies
 for i in "${!COOKIES[@]}"; do
   if [ $i -eq 0 ]; then
     add_entry "cookieHeader" "${COOKIES[$i]}"
@@ -74,7 +101,7 @@ for i in "${!COOKIES[@]}"; do
   fi
 done
 
-# Add M3U cookies
+# JTV cookies
 for i in "${!JTV_COOKIES[@]}"; do
   if [ $i -eq 0 ]; then
     add_entry "cookieHeaderjtv" "${JTV_COOKIES[$i]}"
@@ -85,10 +112,9 @@ done
 
 NEW_JSON="$NEW_JSON}"
 
-# ----------- DEBUG INFO -----------
-echo "Default cookies: ${#DEFAULT_COOKIES[@]}"
-echo "JSON cookies: ${#COOKIES[@]}"
-echo "JTV cookies: ${#JTV_COOKIES[@]}"
+# ----------- DEBUG -----------
+echo "Final JSON cookies: ${#COOKIES[@]}"
+echo "Final JTV cookies: ${#JTV_COOKIES[@]}"
 
 # ----------- COMPARE & SAVE -----------
 if [ -f cookie.txt ] && [ "$(cat cookie.txt)" = "$NEW_JSON" ]; then
