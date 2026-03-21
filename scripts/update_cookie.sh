@@ -69,5 +69,12 @@ if [ -f cookie.txt ] && [ "$(cat cookie.txt)" = "$NEW_JSON" ]; then
   exit 0
 fi
 
-echo "$NEW_JSON" > cookie.txt
+#echo "$NEW_JSON" > cookie.txt
+if [ -f cookie.txt ]; then
+  MERGED=$(jq -s '.[0] * .[1]' cookie.txt <(echo "$NEW_JSON"))
+  echo "$MERGED" > cookie.txt
+else
+  echo "$NEW_JSON" > cookie.txt
+fi
+
 echo "Cookie file updated."
