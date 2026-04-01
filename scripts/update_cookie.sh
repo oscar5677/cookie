@@ -8,7 +8,11 @@ CONTENT=$(curl -s "$URL")
 
 # Extract unique cookies while preserving original order
 mapfile -t COOKIES < <(echo "$CONTENT" | jq -r '
-  [.[] | select(.cookie != null and .cookie != "") | .cookie]
+  if type=="array" then
+    [.[] | select(.cookie != null and .cookie != "") | .cookie]
+  else
+    [select(.cookie != null and .cookie != "") | .cookie]
+  end
   | reduce .[] as $c ([]; if index($c) then . else . + [$c] end)
   | .[]
 ')
