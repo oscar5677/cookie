@@ -1,6 +1,8 @@
 #!/bin/bash
 
-URL="https://pkll.xojiv79335.workers.dev/"
+#URL="https://pkll.xojiv79335.workers.dev/"
+
+URL="https://my-api-5e7.pages.dev/jiotv2.json"
 
 CONTENT=$(curl -s "$URL")
 
