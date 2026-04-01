@@ -2,7 +2,9 @@
 
 #URL="https://pkll.xojiv79335.workers.dev/"
 
-URL="https://my-api-5e7.pages.dev/jiotv2.json"
+#URL="https://my-api-5e7.pages.dev/jiotv2.json"
+
+URL="https://allrounder-live2.pages.dev/api/cookie.json"
 
 CONTENT=$(curl -s "$URL")
 
