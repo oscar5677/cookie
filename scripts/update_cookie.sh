@@ -4,7 +4,7 @@
 
 #URL="https://my-api-5e7.pages.dev/jiotv2.json"
 
-URL="https://allrounder-live3.pages.dev/api/cookie.json"
+URL="https://allrounder-live4.pages.dev/api/cookie.json"
 
 CONTENT=$(curl -s "$URL")
 
