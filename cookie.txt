@@ -4,10 +4,10 @@
   "cookieDefault2": "__hdnea__=st=1774003153~exp=1774089553~acl=/*~hmac=70dc37139d185e91fa6b7753aa0a40e814e17cc2235346a6ae078ddb6d000a06",
   "cookieDefault3": "__hdnea__=st=1774003153~exp=1774089553~acl=/*~hmac=70dc37139d185e91fa6b7753aa0a40e814e17cc2235346a6ae078ddb6d000a06",
   "cookieDefault4": "__hdnea__=st=1774003153~exp=1774089553~acl=/*~hmac=70dc37139d185e91fa6b7753aa0a40e814e17cc2235346a6ae078ddb6d000a06",
-  "cookieHeader": "__hdnea__=st=1776169466~exp=1776191066~acl=/bpk-tv/Star_Sports_HD1_Hindi_BTS/WDVLive/*~hmac=5ab479229330ee24c68c1d97fdb02a71f0e4c6d72254d4fbaa9a01894c5f4317",
-  "cookieHeader2": "__hdnea__=st=1776169411~exp=1776191011~acl=/bpk-tv/Star_Sports_HD1_BTS/WDVLive/*~hmac=a191ce291c15a07d0e663e34fece0c364ad678445a8f0d39851431990cb6db4c",
-  "cookieHeader3": "__hdnea__=st=1776168690~exp=1776190290~acl=/bpk-tv/Star_Sports_1_Tamil_HD_BTS/output/*~hmac=82fbc06c19887e4a04ee6e6fa083fa2c115866a43771093aaf24fa188f41a048",
-  "cookieHeader4": "__hdnea__=st=1776168759~exp=1776190359~acl=/bpk-tv/Star_Sports_1_Telugu_HD_BTS/output/*~hmac=c8ada6d8c609c5625e86950ec2159c37d4453132943f017eef9bc010e3bf0425",
+  "cookieHeader": "__hdnea__=st=1776253958~exp=1776275558~acl=/bpk-tv/Star_Sports_HD1_Hindi_BTS/WDVLive/*~hmac=465f172e7f2d189dae3fadbed56662b2acfe174a53cfb65fe58f232376338cb8",
+  "cookieHeader2": "__hdnea__=st=1776253907~exp=1776275507~acl=/bpk-tv/Star_Sports_HD1_BTS/WDVLive/*~hmac=d859660dff9955afba86bd52afb21b42c49f4e2caf7d5e15dc6860d9875f91b3",
+  "cookieHeader3": "__hdnea__=st=1776253165~exp=1776274765~acl=/bpk-tv/Star_Sports_1_Tamil_HD_BTS/output/*~hmac=800295e4e96f7aa3a1ca316f2192c5abfc0eda28f0f3a1847bb99ff7af7b7673",
+  "cookieHeader4": "__hdnea__=st=1776253231~exp=1776274831~acl=/bpk-tv/Star_Sports_1_Telugu_HD_BTS/output/*~hmac=cdaf0442c6bb7a4e8e2612f976ab97fc0c6d270b56d0377c2847999315bdd820",
   "cookieHeader5": "__hdnea__=st=1775982753~exp=1776004353~acl=/bpk-tv/StarSportsHD2Hin_BTS/output/*~hmac=16d37e55235cce2780522a19ae5f4ef95bc0737a9127c7cc4ac46",
   "cookieHeader6": "__hdnea__=st=1775999705~exp=1776021305~acl=/bpk-tv/Star_Sports_HD2_BTS/output/*~hmac=2f0503ec60a4540a03183a2264c5b6c8d656b67ba588307f46985e6af3f279e8"
 }
